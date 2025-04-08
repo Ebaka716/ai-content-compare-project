@@ -1,3 +1,5 @@
+'use client'; // Mark this page as a Client Component
+
 import { useState, useEffect } from 'react';
 import ContentEditorBox from '@/components/ContentEditorBox';
 import CardPreviewBox from '@/components/CardPreviewBox';
