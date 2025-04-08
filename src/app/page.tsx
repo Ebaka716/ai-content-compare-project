@@ -1,13 +1,16 @@
 'use client'; // Mark this page as a Client Component
 
 import { useState, useEffect } from 'react';
-import ContentEditorBox from '@/components/ContentEditorBox';
-import CardPreviewBox from '@/components/CardPreviewBox';
-import AIContentEditorBox from '@/components/AIContentEditorBox';
-import AIDisplayOptionsBox from '@/components/AIDisplayOptionsBox';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/Header';
-import AIConfigModal from '@/components/AIConfigModal';
+import dynamic from 'next/dynamic'; // Import dynamic
+
+// Dynamically import components that use browser APIs
+const ContentEditorBox = dynamic(() => import('@/components/ContentEditorBox'), { ssr: false });
+const CardPreviewBox = dynamic(() => import('@/components/CardPreviewBox'), { ssr: false });
+const AIContentEditorBox = dynamic(() => import('@/components/AIContentEditorBox'), { ssr: false });
+const AIDisplayOptionsBox = dynamic(() => import('@/components/AIDisplayOptionsBox'), { ssr: false });
+const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
+const Header = dynamic(() => import('@/components/Header'), { ssr: false }); // Header might be okay, but safer to dynamic import if it ever uses window/document
+const AIConfigModal = dynamic(() => import('@/components/AIConfigModal'), { ssr: false });
 
 export default function Home() {
   // State for Tab One
