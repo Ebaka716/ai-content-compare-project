@@ -35,9 +35,9 @@ const ContentEditorBox = ({ initialContent, onContentChange }: ContentEditorBoxP
   // --- Quill Initialization Effect ---
   useEffect(() => {
     let quillInstance: Quill | null = null;
-    const currentEditorRef = editorRef.current; // Store ref current value
+    const currentEditorRef = editorRef.current;
 
-    if (currentEditorRef && !quillRef.current) { // Check variable and ensure not already initialized
+    if (currentEditorRef && !quillRef.current) {
       quillInstance = new Quill(currentEditorRef, {
         modules: {
           toolbar: [
@@ -49,7 +49,10 @@ const ContentEditorBox = ({ initialContent, onContentChange }: ContentEditorBoxP
             [{ 'indent': '-1' }, { 'indent': '+1' }],
             ['link', 'image'],
             ['clean']
-          ]
+          ],
+          clipboard: {
+            matchVisual: false,
+          }
         },
         placeholder: 'Compose your content here...',
         theme: 'snow'

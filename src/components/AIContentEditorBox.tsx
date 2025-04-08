@@ -38,7 +38,10 @@ const AIContentEditorBox = ({
             [{ 'indent': '-1' }, { 'indent': '+1' }],
             ['link', 'image'],
             ['clean']
-          ]
+          ],
+          clipboard: {
+            matchVisual: false,
+          }
         },
         placeholder: 'Paste plain text or type here, then use \'Format with AI\'...',
         theme: 'snow'
