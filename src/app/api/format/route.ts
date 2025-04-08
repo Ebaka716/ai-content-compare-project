@@ -71,8 +71,12 @@ export async function POST(request: Request) {
     // Return the formatted content
     return NextResponse.json({ formattedContent });
 
-  } catch (error: any) {
-    console.error('Error in /api/format:', error);
-    return NextResponse.json({ error: error.message || 'Failed to format content' }, { status: 500 });
+  } catch (error: unknown) {
+    let errorMessage = 'Failed to format content';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    console.error('Error formatting content:', errorMessage);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 } 

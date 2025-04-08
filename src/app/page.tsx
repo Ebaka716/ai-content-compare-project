@@ -79,12 +79,16 @@ export default function Home() {
       const data = await response.json();
       setAiFormattedContent(data.formattedContent); // Update state with formatted content
 
-    } catch (error: any) {
-      console.error("AI Formatting Error:", error);
-      setFormatError(error.message);
-      setAiFormattedContent(""); // Clear content on error
+    } catch (error: unknown) {
+      let errorMessage = 'An unknown error occurred during formatting.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error("AI Formatting Error:", errorMessage);
+      setFormatError(errorMessage);
+      setAiFormattedContent("");
     } finally {
-      setIsFormatting(false); // End loading
+      setIsFormatting(false);
     }
   };
 

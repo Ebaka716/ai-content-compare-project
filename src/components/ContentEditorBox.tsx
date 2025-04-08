@@ -198,7 +198,6 @@ const ContentEditorBox = ({ initialContent, onContentChange }: ContentEditorBoxP
   const statusError = "text-red-700 bg-red-100";
   const statusInfo = "text-blue-700 bg-blue-100";
   const sectionLabelStyle = "font-bold mt-auto pt-4 mb-1 text-gray-600 border-t border-gray-200 pb-1 flex justify-between items-center tracking-[var(--fidelity-header-letter-spacing)]";
-  const textareaStyle = "w-full h-[130px] p-2.5 border border-gray-300 rounded resize-y font-[inherit] shrink-0 leading-[var(--fidelity-line-height)] tracking-[var(--fidelity-letter-spacing)] bg-gray-50";
 
   // --- Render Logic ---
   return (
