@@ -107,7 +107,7 @@ const AIConfigModal = ({ isOpen, onClose }: AIConfigModalProps) => {
               placeholder={apiKeyExists ? '••••••••••••••••••••••••••••••' : 'sk-...'} 
             />
             <div className="text-xs text-[#666] mt-1">
-              Your API key is stored locally in your browser's localStorage.
+              Your API key is stored locally in your browser&#39;s localStorage.
             </div>
           </div>
         </div>
