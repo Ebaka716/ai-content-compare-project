@@ -9,7 +9,6 @@ const CardPreviewBox = dynamic(() => import('@/components/CardPreviewBox'), { ss
 const AIContentEditorBox = dynamic(() => import('@/components/AIContentEditorBox'), { ssr: false });
 const AIDisplayOptionsBox = dynamic(() => import('@/components/AIDisplayOptionsBox'), { ssr: false });
 const Sidebar = dynamic(() => import('@/components/Sidebar'), { ssr: false });
-const Header = dynamic(() => import('@/components/Header'), { ssr: false }); // Header might be okay, but safer to dynamic import if it ever uses window/document
 const AIConfigModal = dynamic(() => import('@/components/AIConfigModal'), { ssr: false });
 
 export default function Home() {
