@@ -39,45 +39,51 @@ const AIContentEditorBox = ({
   const [importMode, setImportMode] = useState('word');
   const [importStatus, setImportStatus] = useState<ImportStatus>(null);
 
-  // Initialize Quill editor for Tab Two
+  // --- Quill Initialization Effect ---
   useEffect(() => {
-    if (editorRef.current && !quillRef.current) {
-      quillRef.current = new Quill(editorRef.current, {
-        modules: { /* Standard toolbar */ 
-           toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],
-            ['blockquote', 'code-block'],
-            [{ 'header': 1 }, { 'header': 2 }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'script': 'sub' }, { 'script': 'super' }],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image'],
-            ['clean']
-          ]
-        },
-        placeholder: 'Compose content for AI formatting...',
-        theme: 'snow'
-      });
+    let quillInstance: Quill | null = null;
+    const currentEditorRef = editorRef.current; // Store ref current value
 
-      quillRef.current.clipboard.dangerouslyPasteHTML(initialContent || '');
+    if (currentEditorRef) { // Use the variable
+        quillInstance = new Quill(currentEditorRef, {
+          modules: { /* Standard toolbar */ 
+             toolbar: [
+              ['bold', 'italic', 'underline', 'strike'],
+              ['blockquote', 'code-block'],
+              [{ 'header': 1 }, { 'header': 2 }],
+              [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+              [{ 'script': 'sub' }, { 'script': 'super' }],
+              [{ 'indent': '-1' }, { 'indent': '+1' }],
+              ['link', 'image'],
+              ['clean']
+            ]
+          },
+          placeholder: 'Compose content for AI formatting...',
+          theme: 'snow'
+        });
 
-      quillRef.current.on('text-change', (delta, oldDelta, source) => {
-        if (source === 'user') {
-          const html = quillRef.current?.root.innerHTML || '';
-          onContentChange(html); // Notify parent of content change
-        }
-      });
+        quillInstance.clipboard.dangerouslyPasteHTML(initialContent || '');
+
+        quillInstance.on('text-change', (_, __, source) => {
+          if (source === 'user') {
+            const html = quillInstance?.root.innerHTML || '';
+            onContentChange(html); // Notify parent of content change
+          }
+        });
+        quillRef.current = quillInstance; 
     }
-
+    // Cleanup
     return () => {
-      if (quillRef.current) {
-        quillRef.current = null;
-        if (editorRef.current) {
-           editorRef.current.innerHTML = '';
+        if (currentEditorRef) { // Use the variable in cleanup
+            currentEditorRef.innerHTML = ''; 
         }
-      }
+        quillRef.current = null;
     };
-  }, [initialContent, onContentChange]);
+  // Dependency array should only include things that, if changed, require re-running the effect.
+  // initialContent is used to set the initial value, but changing it might not require re-initializing Quill.
+  // onContentChange is a function reference, stable if defined with useCallback or outside component.
+  // Keeping it simple for now, but could refine dependencies if needed.
+  }, [/* initialContent, onContentChange */]); // Consider dependencies carefully
 
   // --- Modal Handlers (copied from ContentEditorBox) ---
   const openModal = () => setIsModalOpen(true);
@@ -118,9 +124,13 @@ const AIContentEditorBox = ({
         // Use the onContentChange prop to update the parent state (aiEditorContent)
         onContentChange(newContent); 
         setImportStatus({ message: 'File imported successfully!', type: 'success' });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error processing file:', error);
-        setImportStatus({ message: `Error: ${error.message}`, type: 'error' });
+        let errorMessage = 'An unknown error occurred processing the file.';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        setImportStatus({ message: `Error: ${errorMessage}`, type: 'error' });
       }
     };
     reader.onerror = () => {
@@ -151,12 +161,6 @@ const AIContentEditorBox = ({
   // Placeholder handlers for AI buttons
   const handleAiConfig = () => {
     onAiConfigOpen(); // Call parent handler to open modal
-  };
-   const handleImportClick = () => {
-    // TODO: Implement import modal logic specific to this tab if needed, 
-    // or reuse/adapt the logic from ContentEditorBox 
-    console.log("Import clicked - AI Tab");
-    // fileInputRef.current?.click(); 
   };
 
   // --- Tailwind Base Styles (copied from ContentEditorBox for consistency) --- 

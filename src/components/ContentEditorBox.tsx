@@ -32,11 +32,13 @@ const ContentEditorBox = ({ initialContent, onContentChange }: ContentEditorBoxP
   const [importMode, setImportMode] = useState('word');
   const [importStatus, setImportStatus] = useState<ImportStatus>(null);
 
-  // --- Quill Initialization Effect (mostly unchanged) ---
+  // --- Quill Initialization Effect ---
   useEffect(() => {
-    // ... (Quill init logic remains the same)
-      if (editorRef.current && !quillRef.current) {
-      quillRef.current = new Quill(editorRef.current, {
+    let quillInstance: Quill | null = null;
+    const currentEditorRef = editorRef.current; // Store ref current value
+
+    if (currentEditorRef && !quillRef.current) { // Check variable and ensure not already initialized
+      quillInstance = new Quill(currentEditorRef, {
         modules: {
           toolbar: [
             ['bold', 'italic', 'underline', 'strike'],
@@ -52,23 +54,23 @@ const ContentEditorBox = ({ initialContent, onContentChange }: ContentEditorBoxP
         placeholder: 'Compose your content here...',
         theme: 'snow'
       });
-      quillRef.current.clipboard.dangerouslyPasteHTML(initialContent || '');
-      quillRef.current.on('text-change', (delta, oldDelta, source) => {
+      quillInstance.clipboard.dangerouslyPasteHTML(initialContent || '');
+      quillInstance.on('text-change', (_, __, source) => {
         if (source === 'user') {
-          const html = quillRef.current?.root.innerHTML || '';
+          const html = quillInstance?.root.innerHTML || '';
           onContentChange(html);
         }
       });
+      quillRef.current = quillInstance; 
     }
-     return () => {
-      if (quillRef.current) {
-        quillRef.current = null;
-        if (editorRef.current) {
-           editorRef.current.innerHTML = '';
-        }
+    return () => {
+      // Cleanup using the captured variable
+      if (currentEditorRef) { 
+         currentEditorRef.innerHTML = ''; 
       }
+      quillRef.current = null;
     };
-  }, [initialContent, onContentChange]);
+  }, [initialContent, onContentChange]); // Consider dependencies
 
   // --- Formatted Output Effect (unchanged) ---
   useEffect(() => {
@@ -132,9 +134,13 @@ const ContentEditorBox = ({ initialContent, onContentChange }: ContentEditorBoxP
 
         setImportStatus({ message: 'File imported successfully!', type: 'success' });
 
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error processing file:', error);
-        setImportStatus({ message: `Error: ${error.message}`, type: 'error' });
+        let errorMessage = 'An unknown error occurred processing the file.';
+        if (error instanceof Error) {
+           errorMessage = error.message;
+        }
+        setImportStatus({ message: `Error: ${errorMessage}`, type: 'error' });
       }
     };
     reader.onerror = () => {
